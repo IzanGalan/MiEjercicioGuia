@@ -13,13 +13,11 @@ int main(int argc, char *argv[]) {
 	char respuesta[512];
 	
 	// Inicializaciones
-	// Abrimos el socket
 	if ((sock_listen = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 		printf("Error creando socket\n");
 		exit(1);
 	}
 	
-	// Configuramos la dirección del servidor
 	memset(&serv_adr, 0, sizeof(serv_adr));
 	serv_adr.sin_family = AF_INET;
 	serv_adr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -80,14 +78,18 @@ int main(int argc, char *argv[]) {
 				}
 			} else if (codigo == 3) {
 				p = strtok(NULL, "/");
-				float altura = p ? atof(p) : 0;
-				if (altura > 1.70) {
-					sprintf(respuesta, "%s: eres alto", nombre);
+				if (p != NULL) {
+					float altura = atof(p);
+					if (altura > 1.70) {
+						sprintf(respuesta, "%s: eres alto", nombre);
+					} else {
+						sprintf(respuesta, "%s: eres bajo", nombre);
+					}
 				} else {
-					sprintf(respuesta, "%s: eres bajo", nombre);
+					strcpy(respuesta, "Altura no proporcionada");
 				}
 			} else {
-				strcpy(respuesta, "Codigo desconocido");
+				strcpy(respuesta, "Código desconocido");
 			}
 			
 			if (codigo != 0) {

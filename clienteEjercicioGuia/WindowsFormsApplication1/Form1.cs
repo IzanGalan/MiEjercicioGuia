@@ -29,16 +29,16 @@ namespace WindowsFormsApplication1
    
         private void button2_Click(object sender, EventArgs e)
         {
+            private void button2_Click(object sender, EventArgs e)
+            {
                 if (Longitud.Checked)
                 {
                     // Quiere saber la longitud
                     string mensaje = "1/" + nombre.Text;
-                    // Enviamos al servidor el nombre tecleado
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
 
-                    //Recibimos la respuesta del servidor
-                    byte[] msg2 = new byte[80];
+                    byte[] msg2 = new byte[80]; // Se puede ajustar si se espera más de 80 caracteres
                     server.Receive(msg2);
                     mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
                     MessageBox.Show("La longitud de tu nombre es: " + mensaje);
@@ -47,39 +47,44 @@ namespace WindowsFormsApplication1
                 {
                     // Quiere saber si el nombre es bonito
                     string mensaje = "2/" + nombre.Text;
-                    // Enviamos al servidor el nombre tecleado
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
                     server.Send(msg);
 
-                    //Recibimos la respuesta del servidor
-                    byte[] msg2 = new byte[80];
+                    byte[] msg2 = new byte[80]; // Se puede ajustar si se espera más de 80 caracteres
                     server.Receive(msg2);
                     mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
-
 
                     if (mensaje == "SI")
                         MessageBox.Show("Tu nombre ES bonito.");
                     else
                         MessageBox.Show("Tu nombre NO es bonito. Lo siento.");
-
-
                 }
-                else
+                else if (Alto.Checked)
                 {
-                // Quiere saber si el nombre es alto
-                string mensaje = "3/" + nombre.Text + Altura.Text;
-                // Enviamos al servidor el nombre y la altura tecleado
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
-                server.Send(msg);
+                    // Quiere saber si el nombre es alto
+                    string alturaText = Altura.Text;
 
-                //Recibimos la respuesta del servidor
-                byte[] msg2 = new byte[80];
-                server.Receive(msg2);
-                mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
+                    // Verificar si la altura ingresada es un número
+                    if (float.TryParse(alturaText, out float altura))
+                    {
+                        // Formato esperado: "3/nombre/altura"
+                        string mensaje = "3/" + nombre.Text + "/" + alturaText;
+                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(mensaje);
+                        server.Send(msg);
 
+                        byte[] msg2 = new byte[80]; // Tamaño adecuado para la respuesta
+                        server.Receive(msg2);
+                        mensaje = Encoding.ASCII.GetString(msg2).Split('\0')[0];
 
-                MessageBox.Show(mensaje);
+                        MessageBox.Show(mensaje); // Muestra la respuesta recibida
+                    }
+                    else
+                    {
+                        MessageBox.Show("Por favor, ingresa una altura válida.");
+                    }
                 }
+            }
+
         }
 
         private void Alto_CheckedChanged(object sender, EventArgs e)
